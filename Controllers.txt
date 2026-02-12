@@ -1,0 +1,23 @@
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+exports.register = async (req, res) => {
+  const { name, email, password, referralCode } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  let referredBy = null;
+  if (referralCode) {
+    referredBy = await User.findOne({ referralCode });
+  }
+  const user = new User({ name, email, password: hashedPassword, referredBy, referralCode: Math.random().toString(36).substr(2, 9) });
+  await user.save();
+  res.json({ message: 'Registered successfully' });
+};
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user || !(await bcrypt.compare(password, user.password))) return res.status(400).json({ message: 'Invalid credentials' });
+  const token = jwt.sign({ id: user._id }, 'secretkey');
+  res.json({ token, user });
+};

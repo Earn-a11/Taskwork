@@ -1,0 +1,21 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const path = require('path');
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static('public'));
+
+mongoose.connect('mongodb://localhost:27017/taskincome', { useNewUrlParser: true, useUnifiedTopology: true });
+
+app.use('/api', require('./routes/index'));
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views/index.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views/register.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'views/dashboard.html')));
+app.get('/plans', (req, res) => res.sendFile(path.join(__dirname, 'views/plans.html')));
+app.get('/payment', (req, res) => res.sendFile(path.join(__dirname, 'views/payment.html')));
+app.get('/home', (req, res) => res.sendFile(path.join(__

@@ -1,0 +1,26 @@
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  referralCode: { type: String, unique: true },
+  referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  walletBalance: { type: Number, default: 0 },
+  plan: {
+    name: String,
+    price: Number,
+    earningPerTask: Number,
+    taskLimit: Number,
+    isActive: { type: Boolean, default: false }
+  },
+  completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+  bankDetails: {
+    accountHolderName: String,
+    accountNumber: String,
+    ifscCode: String
+  },
+  isAdmin: { type: Boolean, default: false }
+});
+
+module.exports = mongoose.model('User', userSchema);
